@@ -8,6 +8,10 @@ private:
     float R0 = 76.63; // Resistance in clean air
     float RL = 10.0; // Load resistance in KΩ
 
+    float currentCO2Level;
+    float currentNH4Level;
+    float currentAlcoholLevel;
+
     float calculatePPM(float ratio, float slope, float intercept);
     float calculateRs(int rawValue);
 

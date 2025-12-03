@@ -15,7 +15,7 @@ static const GasCurve NH4_CURVE = {-0.38, 1.58};
 static const GasCurve ALCOHOL_CURVE = {-0.45, 1.70};
 
 GasQualitySensor::GasQualitySensor(int pin, EventHandler* eventHandler)
-    : Sensor(pin, eventHandler) {
+    : Sensor(pin, eventHandler) currentCO2Level(0.0), currentNH4Level(0.0), currentAlcoholLevel(0.0) {
     pinMode(pin, INPUT);
 }
 
@@ -33,42 +33,30 @@ void GasQualitySensor::scanGasLevels() {
     float Rs = calculateRs(rawValue);
     float ratio = Rs / R0;
 
-    float co2Level = calculatePPM(ratio, CO2_CURVE.slope, CO2_CURVE.intercept);
-    float nh4Level = calculatePPM(ratio, NH4_CURVE.slope, NH4_CURVE.intercept);
-    float alcoholLevel = calculatePPM(ratio, ALCOHOL_CURVE.slope, ALCOHOL_CURVE.intercept);
+    currentCO2Level = calculatePPM(ratio, CO2_CURVE.slope, CO2_CURVE.intercept);
+    currentNH4Level = calculatePPM(ratio, NH4_CURVE.slope, NH4_CURVE.intercept);
+    currentAlcoholLevel = calculatePPM(ratio, ALCOHOL_CURVE.slope, ALCOHOL_CURVE.intercept);
 
-    if (co2Level > 1000.0) {
+    // Avoid repeated events since at least one condition is met
+    if (currentCO2Level > 1000.0) {
         on(HIGH_CO2_LEVEL_EVENT);
-    }
-
-    if (nh4Level > 50.0) {
-        on(HIGH_NH4_LEVEL_EVENT);
-    }
-
-    if (alcoholLevel > 200.0) {
-        on(HIGH_ALCOHOL_LEVEL_EVENT);
+    } else if (currentCO2Level > 800.0) {
+        on(HIGH_CO2_LEVEL_EVENT);
+    } else if (currentCO2Level > 600.0) {
+        on(HIGH_CO2_LEVEL_EVENT);
     }
 }
 
 float GasQualitySensor::getCO2Level() {
-    int rawValue = analogRead(pin);
-    float Rs = calculateRs(rawValue);
-    float ratio = Rs / R0;
-    return calculatePPM(ratio, CO2_CURVE.slope, CO2_CURVE.intercept);
+    return currentCO2Level;
 }
 
 float GasQualitySensor::getNH4Level() {
-    int rawValue = analogRead(pin);
-    float Rs = calculateRs(rawValue);
-    float ratio = Rs / R0;
-    return calculatePPM(ratio, NH4_CURVE.slope, NH4_CURVE.intercept);
+    return currentNH4Level;
 }
 
 float GasQualitySensor::getAlcoholLevel() {
-    int rawValue = analogRead(pin);
-    float Rs = calculateRs(rawValue);
-    float ratio = Rs / R0;
-    return calculatePPM(ratio, ALCOHOL_CURVE.slope, ALCOHOL_CURVE.intercept);
+    return currentAlcoholLevel;
 }
 
 void GasQualitySensor::calibrate() {
