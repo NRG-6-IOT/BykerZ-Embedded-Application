@@ -6,8 +6,9 @@
 
 class TemperatureSensor : public Sensor {
 private:
-    DHT* dht;
+    DHT dht;
     float currentTemperature;
+    int dhtType;
 
 public:
     static const int HIGH_TEMPERATURE_EVENT_ID = 3;
@@ -17,8 +18,9 @@ public:
 
     TemperatureSensor(int pin, int type, EventHandler* eventHandler = nullptr);
 
+    bool initialize();
     void scanTemperature();
-    float getTemperature();
+    float getTemperature() const;
 };
 
 #endif //TEMPERATURE_SENSOR_H
