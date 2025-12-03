@@ -8,17 +8,19 @@
 class GPSSensor : public Sensor {
 private:
     TinyGPSPlus gps;
-    HardwareSerial* gpsSerial;
-    float latitude;
-    float longitude;
+    HardwareSerial gpsSerial;
+    double latitude;
+    double longitude;
     int rxPin;
     int txPin;
-public:
-    GPSSensor(int pin, int rx, int tx, EventHandler* eventHandler = nullptr);
-    void scanLocation();
-    float getLatitude();
-    float getLongitude();
-};
 
+public:
+    GPSSensor(int uartNum, int rx, int tx, EventHandler* eventHandler = nullptr);
+
+    void scanLocation();
+    double getLatitude() const;
+    double getLongitude() const;
+    bool isLocationValid() const;
+};
 
 #endif //GPS_SENSOR_H
