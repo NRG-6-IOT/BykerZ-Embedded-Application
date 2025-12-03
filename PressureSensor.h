@@ -1,10 +1,10 @@
-#ifndef BMP_SENSOR_H
-#define BMP_SENSOR_H
+#ifndef PRESSURE_SENSOR_H
+#define PRESSURE_SENSOR_H
 
 #include "Sensor.h"
 #include <Adafruit_BMP280.h>
 
-class BMPSensor : public Sensor {
+class PressureSensor : public Sensor {
 private:
     Adafruit_BMP280* bmp;
     uint8_t address;
@@ -15,10 +15,10 @@ public:
     static const Event LOW_PRESSURE_EVENT;
     static const Event HIGH_PRESSURE_EVENT;
 
-    BMPSensor(EventHandler* eventHandler = nullptr);
+    PressureSensor(EventHandler* eventHandler = nullptr);
 
     void scanPressure();
     float getPressure();
 };
 
-#endif //BMP_SENSOR_H
+#endif //PRESSURE_SENSOR_H

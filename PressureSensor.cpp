@@ -1,10 +1,10 @@
-#include "BMPSensor.h"
+#include "PressureSensor.h"
 #include <Arduino.h>
 
-const Event BMPSensor::LOW_PRESSURE_EVENT = Event(BMPSensor::LOW_PRESSURE_EVENT_ID);
-const Event BMPSensor::HIGH_PRESSURE_EVENT = Event(BMPSensor::HIGH_PRESSURE_EVENT_ID);
+const Event PressureSensor::LOW_PRESSURE_EVENT = Event(PressureSensor::LOW_PRESSURE_EVENT_ID);
+const Event PressureSensor::HIGH_PRESSURE_EVENT = Event(PressureSensor::HIGH_PRESSURE_EVENT_ID);
 
-BMPSensor::BMPSensor(EventHandler *eventHandler)
+PressureSensor::PressureSensor(EventHandler *eventHandler)
     : Sensor(eventHandler) {
     bmp = new Adafruit_BMP280();
     if (!bmp->begin(0x76)) {
@@ -24,7 +24,7 @@ BMPSensor::BMPSensor(EventHandler *eventHandler)
     Serial.println("BMP280 initialized!");
 }
 
-void BMPSensor::scanPressure() {
+void PressureSensor::scanPressure() {
     float currentPressure = bmp->readPressure() / 100.0F; // Convert to hPa
     if (currentPressure < 980.0F) {
         on(LOW_PRESSURE_EVENT);
@@ -33,6 +33,6 @@ void BMPSensor::scanPressure() {
     }
 }
 
-float BMPSensor::getPressure() const {
+float PressureSensor::getPressure() const {
     return bmp->readPressure() / 100.0F;
 }
