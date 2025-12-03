@@ -33,7 +33,8 @@
 #include "Actuator.h"
 #include "Led.h"
 #include "Device.h"
-#include "DHTSensor.h"
-#include "BMPSensor.h"
+#include "TemperatureSensor.h"
+#include "PressureSensor.h"
+#include "GasQualitySensor.h"
 
 #endif // MODEST_IOT_H
