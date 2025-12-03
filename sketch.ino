@@ -6,6 +6,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include <Arduino.h>
 
 // Definiciones
 #define LED_PIN 33 // GPIO33 - LED pin
