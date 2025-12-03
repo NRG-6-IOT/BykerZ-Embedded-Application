@@ -7,13 +7,18 @@
 class BMPSensor : public Sensor {
 private:
     Adafruit_BMP280* bmp;
+    uint8_t address;
+    float currentPressure;
 public:
     static const int LOW_PRESSURE_EVENT_ID = 5;
+    static const int HIGH_PRESSURE_EVENT_ID = 6;
     static const Event LOW_PRESSURE_EVENT;
+    static const Event HIGH_PRESSURE_EVENT;
 
     BMPSensor(EventHandler* eventHandler = nullptr);
 
-    float getPressure() const;
+    void scanPressure();
+    float getPressure();
 };
 
 #endif //BMP_SENSOR_H
