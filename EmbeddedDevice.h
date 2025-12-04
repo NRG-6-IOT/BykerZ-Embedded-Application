@@ -19,14 +19,14 @@ private:
     GPSSensor gps;
 
 public:
-    static const int LED_PIN = 33;
-    static const int DHT_PIN = 26;
-    static const int DHT_TYPE = 11;
-    static const int GAS_PIN = 34;
-    static const int KNOCK_PIN = 27;
-    static const int GPS_SERIAL = 2;
-    static const int GPS_RX_PIN = 16;
-    static const int GPS_TX_PIN = 17;
+    static const int LED_PIN = 33; // Self explanatory
+    static const int DHT_PIN = 26; //DHT "DATA" PIN
+    static const int DHT_TYPE = 11; // DHT TYPE (11/22)
+    static const int GAS_PIN = 34; //GAS "AO" PIN
+    static const int KNOCK_PIN = 27; //KY-031 "MIDDLE" PIN
+    static const int GPS_SERIAL = 2; //UART2
+    static const int GPS_RX_PIN = 16; //PIN RECEIVES FROM GPS "TX"
+    static const int GPS_TX_PIN = 17; //PIN TRANSMITS TO GPS "RX"
 
     EmbeddedDevice(
         int ledPin = LED_PIN,
