@@ -38,46 +38,46 @@ bool EmbeddedDevice::initialize() {
 
 void EmbeddedDevice::on(Event event) {
     if (event == TemperatureSensor::HIGH_TEMPERATURE_EVENT) {
-        statusLed.handle(Led::TURN_ON_COMMAND);
-        Serial.print("⚠️ HIGH TEMPERATURE DETECTED: ");
+        //statusLed.handle(Led::TURN_ON_COMMAND);
+        Serial.print("HIGH TEMPERATURE DETECTED: ");
         Serial.print(temperature.getTemperature());
         Serial.println(" °C");
 
     } else if (event == TemperatureSensor::LOW_TEMPERATURE_EVENT) {
-        statusLed.handle(Led::TURN_OFF_COMMAND);
-        Serial.print("❄️ LOW TEMPERATURE DETECTED: ");
+        //statusLed.handle(Led::TURN_OFF_COMMAND);
+        Serial.print("LOW TEMPERATURE DETECTED: ");
         Serial.print(temperature.getTemperature());
         Serial.println(" °C");
 
     } else if (event == PressureSensor::LOW_PRESSURE_EVENT) {
-        Serial.print("⬇️ LOW PRESSURE DETECTED: ");
+        Serial.print("⬇LOW PRESSURE DETECTED: ");
         Serial.print(pressure.getPressure());
         Serial.println(" hPa");
 
     } else if (event == PressureSensor::HIGH_PRESSURE_EVENT) {
-        Serial.print("⬆️ HIGH PRESSURE DETECTED: ");
+        Serial.print("⬆HIGH PRESSURE DETECTED: ");
         Serial.print(pressure.getPressure());
         Serial.println(" hPa");
 
     } else if (event == GasQualitySensor::HIGH_CO2_LEVEL_EVENT) {
-        statusLed.handle(Led::TURN_ON_COMMAND);
-        Serial.print("🌫️ HIGH CO2 LEVEL: ");
+        //statusLed.handle(Led::TURN_ON_COMMAND);
+        Serial.print("HIGH CO2 LEVEL: ");
         Serial.print(gasQuality.getCO2Level());
         Serial.println(" ppm");
 
     } else if (event == GasQualitySensor::HIGH_NH3_LEVEL_EVENT) {
-        Serial.print("☣️ HIGH NH3 LEVEL: ");
+        Serial.print("HIGH NH3 LEVEL: ");
         Serial.print(gasQuality.getNH3Level());
         Serial.println(" ppm");
 
     } else if (event == GasQualitySensor::HIGH_BENZENE_LEVEL_EVENT) {
-        Serial.print("⚠️ HIGH BENZENE LEVEL: ");
+        Serial.print("HIGH BENZENE LEVEL: ");
         Serial.print(gasQuality.getBenzeneLevel());
         Serial.println(" ppm");
 
     } else if (event == KnockSensor::KNOCK_DETECTED_EVENT) {
-        statusLed.handle(Led::TOGGLE_LED_COMMAND);
-        Serial.println("🔔 KNOCK DETECTED!");
+        //statusLed.handle(Led::TOGGLE_LED_COMMAND);
+        Serial.println("KNOCK DETECTED!");
     }
 }
 
@@ -96,42 +96,37 @@ void EmbeddedDevice::update() {
     knock.scanKnock();
     gps.scanLocation();
 
-    static unsigned long lastPrint = 0;
-    if (millis() - lastPrint > 5000) {
-        Serial.println("\n=== SENSOR READINGS ===");
+    Serial.println("\n=== SENSOR READINGS ===");
 
-        Serial.print("Temperature: ");
-        Serial.print(temperature.getTemperature());
-        Serial.println(" °C");
+    Serial.print("Knock Detected: ");
+    Serial.println(knock.getKnockStatus() ? "YES" : "NO");
 
-        Serial.print("Pressure: ");
-        Serial.print(pressure.getPressure());
-        Serial.println(" hPa");
+    Serial.print("Temperature: ");
+    Serial.print(temperature.getTemperature());
+    Serial.println(" °C");
 
-        Serial.print("CO2: ");
-        Serial.print(gasQuality.getCO2Level());
-        Serial.println(" ppm");
+    Serial.print("Pressure: ");
+    Serial.print(pressure.getPressure());
+    Serial.println(" hPa");
 
-        Serial.print("NH3: ");
-        Serial.print(gasQuality.getNH3Level());
-        Serial.println(" ppm");
+    Serial.print("CO2: ");
+    Serial.print(gasQuality.getCO2Level());
+    Serial.println(" ppm");
 
-        Serial.print("Benzene: ");
-        Serial.print(gasQuality.getBenzeneLevel());
-        Serial.println(" ppm");
+    Serial.print("NH3: ");
+    Serial.print(gasQuality.getNH3Level());
+    Serial.println(" ppm");
 
-        if (gps.isLocationValid()) {
-            Serial.print("Location: ");
-            Serial.print(gps.getLatitude(), 6);
-            Serial.print(", ");
-            Serial.println(gps.getLongitude(), 6);
-        } else {
-            Serial.println("GPS: No fix");
-        }
+    Serial.print("Benzene: ");
+    Serial.print(gasQuality.getBenzeneLevel());
+    Serial.println(" ppm");
 
-        Serial.println("=======================\n");
-        lastPrint = millis();
-    }
+    Serial.print("Location: ");
+    Serial.print(gps.getLatitude(), 6);
+    Serial.print(", ");
+    Serial.println(gps.getLongitude(), 6);
+
+    Serial.println("=======================\n");
 }
 
 Led& EmbeddedDevice::getStatusLed() {
