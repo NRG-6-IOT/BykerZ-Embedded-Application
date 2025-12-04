@@ -11,6 +11,12 @@ KnockSensor::KnockSensor(int pin, EventHandler* eventHandler)
 void KnockSensor::scanKnock() {
     int state = digitalRead(pin);
     if (state == HIGH) {
-        on(KNOCK_DETECTED_EVENT);
+        knockDetected = true;
+    } else {
+        knockDetected = false;
     }
+}
+
+bool KnockSensor::getKnockStatus() {
+    return knockDetected;
 }
