@@ -28,6 +28,9 @@
 Sensor::Sensor(int pin, EventHandler* eventHandler)
     : pin(pin), handler(eventHandler) {}
 
+Sensor::Sensor(EventHandler* eventHandler)
+    : pin(-1), handler(eventHandler) {}
+
 void Sensor::on(Event event) {
     if (handler != nullptr) {
         handler->on(event);
