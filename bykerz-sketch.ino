@@ -96,56 +96,13 @@ void setup() {
         }
     }
 
-    Serial.println("Warming up components (60 seconds)...");
-    delay(60000);
+    Serial.println("Warming up components (2 minutes)...");
+    delay(120000);
 
     Serial.println("Device ready!");
 }
 
 void loop() {
     device.update();
-
-    static bool lastKnockState = false;
-    static unsigned long lastKnockTime = 0;
-    const unsigned long DEBOUNCE_DELAY = 2000; // 2 seconds debounce
-
-    bool knockDetected = (digitalRead(EmbeddedDevice::KNOCK_PIN) == HIGH);
-
-    // Only process knock if: 1) state changed, 2) enough time passed
-    if (knockDetected && !lastKnockState &&
-        (millis() - lastKnockTime > DEBOUNCE_DELAY)) {
-
-        lastKnockTime = millis();
-
-        Serial.println("\n🔔 KNOCK DETECTED! Sending metrics...");
-
-        float temp = device.getTemperatureSensor().getTemperature();
-        float pressure = device.getPressureSensor().getPressure();
-        float co2 = device.getGasQualitySensor().getCO2Level();
-        float nh3 = device.getGasQualitySensor().getNH3Level();
-        float benzene = device.getGasQualitySensor().getBenzeneLevel();
-        double lat = device.getGPSSensor().getLatitude();
-        double lon = device.getGPSSensor().getLongitude();
-
-        Serial.println("\nCurrent Readings:");
-        Serial.print("  Temperature: "); Serial.print(temp); Serial.println(" °C");
-        Serial.print("  Pressure: "); Serial.print(pressure); Serial.println(" hPa");
-        Serial.print("  CO2: "); Serial.print(co2); Serial.println(" ppm");
-        Serial.print("  NH3: "); Serial.print(nh3); Serial.println(" ppm");
-        Serial.print("  Benzene: "); Serial.print(benzene); Serial.println(" ppm");
-
-        if (device.getGPSSensor().isLocationValid()) {
-            Serial.print("  Location: ");
-            Serial.print(lat, 6);
-            Serial.print(", ");
-            Serial.println(lon, 6);
-        } else {
-            Serial.println("  GPS: No fix (acquiring satellites...)");
-        }
-
-        sendMetric(lat, lon, co2, nh3, benzene, temp, pressure, true);
-    }
-
-    lastKnockState = knockDetected;
-    delay(100);
+    delay(10000);
 }
