@@ -16,7 +16,7 @@ const char* password = "Gatita2020*";
 
 // Edge Service configuration
 const char* edgeServiceUrl = "http://192.168.18.6:5000/api/v1/metrics";
-const char* jwtToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhbHhSYVRpIiwiaWF0IjoxNzYzMTg3MzgyLCJleHAiOjE3NjM3OTIxODJ9._1a68a3YaJx3AGIH8Af7UDQBPfgFVqvj6BO0j1vrlSImoQlmFkKds8tLHK2nEoNN";
+const char* apiToken = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhbHhSYVRpIiwiaWF0IjoxNzYzMTg3MzgyLCJleHAiOjE3NjM3OTIxODJ9._1a68a3YaJx3AGIH8Af7UDQBPfgFVqvj6BO0j1vrlSImoQlmFkKds8tLHK2nEoNN";
 
 void connectWiFi() {
     Serial.println("Connecting to WiFi...");
@@ -45,7 +45,7 @@ void sendMetric(double latitude, double longitude, float co2, float nh3, float b
         return;
     }
     http.addHeader("Content-Type", "application/json");
-    http.addHeader("Authorization", "Bearer " + String(jwtToken));
+    http.addHeader("Authorization", "Bearer " + String(apiToken));
 
     StaticJsonDocument<512> doc;
     doc["device_id"] = deviceId;
@@ -95,6 +95,7 @@ void setup() {
             delay(1000);
         }
     }
+    device.setMetricCallback(sendMetric);
 
     Serial.println("Warming up components (2 minutes)...");
     delay(120000);
@@ -104,5 +105,5 @@ void setup() {
 
 void loop() {
     device.update();
-    delay(10000);
+    delay(1000);
 }
