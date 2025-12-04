@@ -36,48 +36,74 @@ bool EmbeddedDevice::initialize() {
     return true;
 }
 
+void EmbeddedDevice::setMetricCallback(void (*callback)(double, double, float, float, float, float, float, bool)) {
+    metricCallback = callback;
+}
+
+
 void EmbeddedDevice::on(Event event) {
     if (event == TemperatureSensor::HIGH_TEMPERATURE_EVENT) {
         //statusLed.handle(Led::TURN_ON_COMMAND);
         Serial.print("HIGH TEMPERATURE DETECTED: ");
         Serial.print(temperature.getTemperature());
         Serial.println(" °C");
+        shouldSendMetric = true;
 
     } else if (event == TemperatureSensor::LOW_TEMPERATURE_EVENT) {
         //statusLed.handle(Led::TURN_OFF_COMMAND);
         Serial.print("LOW TEMPERATURE DETECTED: ");
         Serial.print(temperature.getTemperature());
         Serial.println(" °C");
+        shouldSendMetric = true;
 
     } else if (event == PressureSensor::LOW_PRESSURE_EVENT) {
         Serial.print("⬇LOW PRESSURE DETECTED: ");
         Serial.print(pressure.getPressure());
         Serial.println(" hPa");
+        shouldSendMetric = true;
 
     } else if (event == PressureSensor::HIGH_PRESSURE_EVENT) {
         Serial.print("⬆HIGH PRESSURE DETECTED: ");
         Serial.print(pressure.getPressure());
         Serial.println(" hPa");
+        shouldSendMetric = true;
 
     } else if (event == GasQualitySensor::HIGH_CO2_LEVEL_EVENT) {
         //statusLed.handle(Led::TURN_ON_COMMAND);
         Serial.print("HIGH CO2 LEVEL: ");
         Serial.print(gasQuality.getCO2Level());
         Serial.println(" ppm");
+        shouldSendMetric = true;
 
     } else if (event == GasQualitySensor::HIGH_NH3_LEVEL_EVENT) {
         Serial.print("HIGH NH3 LEVEL: ");
         Serial.print(gasQuality.getNH3Level());
         Serial.println(" ppm");
+        shouldSendMetric = true;
 
     } else if (event == GasQualitySensor::HIGH_BENZENE_LEVEL_EVENT) {
         Serial.print("HIGH BENZENE LEVEL: ");
         Serial.print(gasQuality.getBenzeneLevel());
         Serial.println(" ppm");
+        shouldSendMetric = true;
 
     } else if (event == KnockSensor::KNOCK_DETECTED_EVENT) {
         //statusLed.handle(Led::TOGGLE_LED_COMMAND);
         Serial.println("KNOCK DETECTED!");
+        shouldSendMetric = true;
+    }
+
+    if (shouldSendMetric && metricCallback != nullptr) {
+        metricCallback(
+            gps.getLatitude(),
+            gps.getLongitude(),
+            gasQuality.getCO2Level(),
+            gasQuality.getNH3Level(),
+            gasQuality.getBenzeneLevel(),
+            temperature.getTemperature(),
+            pressure.getPressure(),
+            !knock.getKnockStatus()
+        );
     }
 }
 

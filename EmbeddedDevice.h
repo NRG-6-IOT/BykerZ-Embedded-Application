@@ -17,6 +17,7 @@ private:
     GasQualitySensor gasQuality;
     KnockSensor knock;
     GPSSensor gps;
+    void (*metricCallback)(double, double, float, float, float, float, float, bool);
 
 public:
     static const int LED_PIN = 33; // Self explanatory
@@ -51,6 +52,8 @@ public:
     GasQualitySensor& getGasQualitySensor();
     KnockSensor& getKnockSensor();
     GPSSensor& getGPSSensor();
+
+    void setMetricCallback(void (*callback)(double, double, float, float, float, float, float, bool));
 };
 
 #endif //EMBEDDED_DEVICE_H
