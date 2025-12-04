@@ -42,6 +42,8 @@ void EmbeddedDevice::setMetricCallback(void (*callback)(double, double, float, f
 
 
 void EmbeddedDevice::on(Event event) {
+    bool shouldSendMetric = false;
+
     if (event == TemperatureSensor::HIGH_TEMPERATURE_EVENT) {
         //statusLed.handle(Led::TURN_ON_COMMAND);
         Serial.print("HIGH TEMPERATURE DETECTED: ");
