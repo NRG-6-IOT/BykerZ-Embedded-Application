@@ -31,10 +31,11 @@
 #include "CommandHandler.h"
 #include "Sensor.h"
 #include "Actuator.h"
-#include "Led.h"
 #include "Device.h"
 #include "TemperatureSensor.h"
 #include "PressureSensor.h"
 #include "GasQualitySensor.h"
+#include "KnockSensor.h"
+#include "GPSSensor.h"
 
 #endif // MODEST_IOT_H
