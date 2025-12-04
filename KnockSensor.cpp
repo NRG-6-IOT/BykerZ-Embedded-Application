@@ -10,7 +10,7 @@ KnockSensor::KnockSensor(int pin, EventHandler* eventHandler)
 
 void KnockSensor::scanKnock() {
     int state = digitalRead(pin);
-    if (state == HIGH) {
+    if (state == LOW) {
         knockDetected = true;
     } else {
         knockDetected = false;
