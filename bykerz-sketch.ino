@@ -2,11 +2,12 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <ArduinoJson.h>
 
 EmbeddedDevice device;
 
 // Device configuration
-const char* ssid = "bykerz-iot-001";
+const char* deviceId = "bykerz-iot-001";
 const int vehicleId = 1;
 
 // WiFi configuration
@@ -32,12 +33,17 @@ void connectWiFi() {
 void sendMetric(double latitude, double longitude, float co2, float nh3, float benzene,
                 float temp, float pressure, bool impact) {
     if (WiFi.status() != WL_CONNECTED) {
-        Serial.println("WiFi not connected. Skipping metric send.");
+        Serial.println("WiFi not connected. Reconnecting...");
+        connectWiFi();
         return;
     }
 
     HTTPClient http;
-    http.begin(edgeServiceUrl);
+    http.setTimeout(5000);
+    if (!http.begin(edgeServiceUrl)) {
+        Serial.println("Failed to begin HTTP connection");
+        return;
+    }
     http.addHeader("Content-Type", "application/json");
     http.addHeader("Authorization", "Bearer " + String(jwtToken));
 
@@ -90,22 +96,29 @@ void setup() {
         }
     }
 
+    Serial.println("Warming up components (60 seconds)...");
+    delay(60000);
+
     Serial.println("Device ready!");
-    Serial.println("Waiting for knock detection...");
 }
 
 void loop() {
-    // Update all sensors
     device.update();
 
-    // Check for knock detection and send metrics
     static bool lastKnockState = false;
+    static unsigned long lastKnockTime = 0;
+    const unsigned long DEBOUNCE_DELAY = 2000; // 2 seconds debounce
+
     bool knockDetected = (digitalRead(EmbeddedDevice::KNOCK_PIN) == HIGH);
 
-    if (knockDetected && !lastKnockState) {
+    // Only process knock if: 1) state changed, 2) enough time passed
+    if (knockDetected && !lastKnockState &&
+        (millis() - lastKnockTime > DEBOUNCE_DELAY)) {
+
+        lastKnockTime = millis();
+
         Serial.println("\n🔔 KNOCK DETECTED! Sending metrics...");
 
-        // Get sensor readings
         float temp = device.getTemperatureSensor().getTemperature();
         float pressure = device.getPressureSensor().getPressure();
         float co2 = device.getGasQualitySensor().getCO2Level();
@@ -114,8 +127,7 @@ void loop() {
         double lat = device.getGPSSensor().getLatitude();
         double lon = device.getGPSSensor().getLongitude();
 
-        // Display readings
-        Serial.println("\n📊 Current Readings:");
+        Serial.println("\nCurrent Readings:");
         Serial.print("  Temperature: "); Serial.print(temp); Serial.println(" °C");
         Serial.print("  Pressure: "); Serial.print(pressure); Serial.println(" hPa");
         Serial.print("  CO2: "); Serial.print(co2); Serial.println(" ppm");
@@ -128,13 +140,10 @@ void loop() {
             Serial.print(", ");
             Serial.println(lon, 6);
         } else {
-            Serial.println("  GPS: No fix");
+            Serial.println("  GPS: No fix (acquiring satellites...)");
         }
 
-        // Send to server
-        //sendMetric(lat, lon, co2, nh3, benzene, temp, pressure, true);
-
-        delay(10000); // Wait 10 seconds before next reading
+        sendMetric(lat, lon, co2, nh3, benzene, temp, pressure, true);
     }
 
     lastKnockState = knockDetected;
