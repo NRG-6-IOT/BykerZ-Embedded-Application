@@ -20,7 +20,6 @@ public:
     void scanLocation();
     double getLatitude() const;
     double getLongitude() const;
-    bool isLocationValid() const;
 };
 
 #endif //GPS_SENSOR_H
