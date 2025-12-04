@@ -85,7 +85,7 @@ void EmbeddedDevice::handle(Command command) {
     if (command == Led::TOGGLE_LED_COMMAND ||
         command == Led::TURN_ON_COMMAND ||
         command == Led::TURN_OFF_COMMAND) {
-        Serial.printf("LED state: %d\n", led.getState());
+        Serial.printf("LED state: %d\n", statusLed.getState());
         }
 }
 
